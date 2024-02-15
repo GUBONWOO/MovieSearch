@@ -47,14 +47,18 @@ export class Store {
         get: () => state[key],
         set: (val) => {
           state[key] = val;
-          this.observers[key].forEach((observer) => observer(val));
+          if (Array.isArray(this.observers[key])) {
+            this.observers[key].forEach((observer) => observer(val));
+          }
         },
       });
     }
   }
   subscribe(key, cb) {
-    Array.isArray(this.observers[key])
-      ? this.observers[key].push(cb)
-      : (this.observers[key] = [cb]);
+    if (Array.isArray(this.observers[key])) {
+      this.observers[key].push(cb);
+    } else {
+      this.observers[key] = [cb];
+    }
   }
 }
